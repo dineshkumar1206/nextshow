@@ -64,7 +64,7 @@ const NewMovies = () => {
     return (
       <div className="flex justify-center items-center h-[50vh]">
         <p className="text-red-500">
-          Failed to load content. Please try again.
+          Failed to load content. Please try again
         </p>
       </div>
     );
