@@ -1,72 +1,74 @@
 import React from "react";
 
 // Dummy Data matching your API response structure
-const dummyBlogs = [
-  {
-    id: 1,
-    title: "Jana Nayagan Official Update",
-    bannerImage:
-      "https://res.cloudinary.com/dcock9gai/image/upload/v1766850721/ott_platform/images/q47zixgfiimrnylwokzn.jpg",
-    shortDescription:
-      "Jana Nayagan ('People's Hero') is an upcoming Indian Tamil-language action thriller...",
-    starCast: "Vijay, Pooja Hegde",
-    directedBy: "H Vinoth",
-    newsDate: "Dec 27, 2025",
-    category: "Cinema Exclusive", // Extra key for UI
-  },
-  {
-    id: 2,
-    title: "Madharasi",
-    bannerImage:
-      "https://res.cloudinary.com/dcock9gai/image/upload/v1766851081/ott_platform/images/jkpiyzpybcunadjarzux.jpg",
-    shortDescription:
-      "Madharaasi (2025) is an AR Murugadoss-directed Tamil action thriller starring Sivakarthikeyan...",
-    starCast: "Sivakarthikeyan, Sapthami",
-    directedBy: "AR Murugadoss",
-    newsDate: "Dec 30, 2025",
-    category: "Trending",
-  },
-  {
-    id: 6,
-    title: "Sardar 2",
-    bannerImage:
-      "https://res.cloudinary.com/dcock9gai/image/upload/v1766909227/ott_platform/images/rltrxa1yis8peyz22oca.jpg",
-    shortDescription:
-      "Sardar 2 (Tamil) is a spy-action sequel to Sardar (2022), starring Karthi...",
-    starCast: "Karthi, S.J. Suryah",
-    directedBy: "P.S. Mithran",
-    newsDate: "Oct 28, 2025",
-    category: "Spy Thriller",
-  },
-  {
-    id: 4,
-    title: "Thalapathy 69",
-    bannerImage:
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop",
-    shortDescription:
-      "The final film of Thalapathy Vijay directed by H Vinoth.",
-    starCast: "Vijay, Bobby Deol",
-    directedBy: "H Vinoth",
-    newsDate: "Jan 05, 2026",
-    category: "Big News",
-  },
-  {
-    id: 5,
-    title: "Vidaa Muyarchi",
-    bannerImage:
-      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1000&auto=format&fit=crop",
-    shortDescription:
-      "Ajith Kumar's long awaited action entertainer filmed in Azerbaijan.",
-    starCast: "Ajith Kumar, Trisha",
-    directedBy: "Magizh Thirumeni",
-    newsDate: "Jan 10, 2026",
-    category: "Kollywood",
-  },
-];
+// const dummyBlogs = [
+//   {
+//     id: 1,
+//     title: "Jana Nayagan Official Update",
+//     bannerImage:
+//       "https://res.cloudinary.com/dcock9gai/image/upload/v1766850721/ott_platform/images/q47zixgfiimrnylwokzn.jpg",
+//     shortDescription:
+//       "Jana Nayagan ('People's Hero') is an upcoming Indian Tamil-language action thriller...",
+//     starCast: "Vijay, Pooja Hegde",
+//     directedBy: "H Vinoth",
+//     newsDate: "Dec 27, 2025",
+//     category: "Cinema Exclusive", // Extra key for UI
+//   },
+//   {
+//     id: 2,
+//     title: "Madharasi",
+//     bannerImage:
+//       "https://res.cloudinary.com/dcock9gai/image/upload/v1766851081/ott_platform/images/jkpiyzpybcunadjarzux.jpg",
+//     shortDescription:
+//       "Madharaasi (2025) is an AR Murugadoss-directed Tamil action thriller starring Sivakarthikeyan...",
+//     starCast: "Sivakarthikeyan, Sapthami",
+//     directedBy: "AR Murugadoss",
+//     newsDate: "Dec 30, 2025",
+//     category: "Trending",
+//   },
+//   {
+//     id: 6,
+//     title: "Sardar 2",
+//     bannerImage:
+//       "https://res.cloudinary.com/dcock9gai/image/upload/v1766909227/ott_platform/images/rltrxa1yis8peyz22oca.jpg",
+//     shortDescription:
+//       "Sardar 2 (Tamil) is a spy-action sequel to Sardar (2022), starring Karthi...",
+//     starCast: "Karthi, S.J. Suryah",
+//     directedBy: "P.S. Mithran",
+//     newsDate: "Oct 28, 2025",
+//     category: "Spy Thriller",
+//   },
+//   {
+//     id: 4,
+//     title: "Thalapathy 69",
+//     bannerImage:
+//       "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop",
+//     shortDescription:
+//       "The final film of Thalapathy Vijay directed by H Vinoth.",
+//     starCast: "Vijay, Bobby Deol",
+//     directedBy: "H Vinoth",
+//     newsDate: "Jan 05, 2026",
+//     category: "Big News",
+//   },
+//   {
+//     id: 5,
+//     title: "Vidaa Muyarchi",
+//     bannerImage:
+//       "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1000&auto=format&fit=crop",
+//     shortDescription:
+//       "Ajith Kumar's long awaited action entertainer filmed in Azerbaijan.",
+//     starCast: "Ajith Kumar, Trisha",
+//     directedBy: "Magizh Thirumeni",
+//     newsDate: "Jan 10, 2026",
+//     category: "Kollywood",
+//   },
+// ];
 
-const NewsHeroSection = () => {
-  const featured = dummyBlogs[0];
-  const sideBlogs = dummyBlogs.slice(1, 5);
+const NewsHeroSection = ({ blogs }) => {  // Expecting blogs as a prop from parent component (NewsHome)
+  if (!blogs || blogs.length === 0) return <div className="text-white p-10 text-center">No news updates available.</div>;
+
+  const featured = blogs[0];
+  const sideBlogs = blogs.slice(1, 5);
 
   return (
     <section className=" py-10 font-sans">

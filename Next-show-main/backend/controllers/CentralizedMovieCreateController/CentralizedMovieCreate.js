@@ -427,7 +427,7 @@ exports.deleteMovie = async (req, res) => {
     const movie = await CentralizedMovieCreate.findByPk(req.params.id);
     if (!movie)
       return res
-        .status(404)
+        .status(404) 
         .json({ success: false, message: "Record not found" });
 
     await movie.destroy(); // Hooks will handle Cloudinary deletion

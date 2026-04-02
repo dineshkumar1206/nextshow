@@ -21,6 +21,9 @@ import { useDispatch } from "react-redux";
 import { getMeAdmin } from "./redux/AdminAuthSlice/AdminAuthSlice";
 import MovieDetailsPage from "./MovieDetails/MovieDetailsPage";
 import NewTrailerSection from "./ADMIN/Dashboard/NewTrailers/NewTrailerSection";
+import NewsList from "./ADMIN/Dashboard/News/NewsList";
+import AddNews from "./ADMIN/Dashboard/News/AddNews";
+import EditNews from "./ADMIN/Dashboard/News/EditNews";
 // import "swiper/css";
 // import "swiper/css/navigation";
 // import "swiper/css/pagination";
@@ -78,6 +81,9 @@ const App = () => {
             <Route path="stream" element={<StreamingContent />} />
             <Route path="centralized" element={<CentralizedContent />} />
             <Route path="new-trailers" element={<NewTrailerSection />} />
+            <Route path="news-list" element={<NewsList />} /> {/* New Route for News List */}
+            <Route path="news-add" element={<AddNews />} /> {/* New Route for Adding News */}
+            <Route path="edit-news/:id" element={<EditNews/>} />
           </Route>
         </Route>
         {/* Optional: 404 */}

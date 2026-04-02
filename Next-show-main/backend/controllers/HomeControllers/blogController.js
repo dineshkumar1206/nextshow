@@ -1,14 +1,11 @@
 const BlogsSchema = require("../../models/HomePage/BlogsSection");
 
-// 1. அனைத்து ப்ளாக்குகளையும் பெறுதல் (ADMIN READ)
+// 1. Get All Blogs (ADMIN READ)
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogList = await BlogsSchema.findAll({
-      order: [["createdAt", "ASC"]], // சமீபத்திய செய்திகள் முதலில் வர
+      order: [["createdAt", "DESC"]],
     });
-
-    // ப்ளாக்குகளே இல்லை என்றால் 200 OK உடன் வெறும் Array அனுப்பலாம்
-    // அல்லது Frontend-ல் "No Blogs Found" எனக் காட்ட வசதியாக அனுப்பலாம்.
 
     return res.status(200).json({
       success: true,
@@ -19,34 +16,37 @@ exports.getAllBlogs = async (req, res) => {
     console.error("Error fetching all blogs:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error while fetching blogs. Please try again later.",
+      message: "Server error while fetching blogs.",
     });
   }
 };
 
-// 2. ஒரு குறிப்பிட்ட ப்ளாக்கை மட்டும் பெறுதல் (DETAILS VIEW)
+
+// 2. Get Single Blog Detail
 exports.getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ID இல்லையென்றால் அல்லது தவறாக இருந்தால்
     if (!id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Blog ID is required" });
-    }
-
-    const blog = await BlogsSchema.findByPk(id);
-    // ப்ளாக் டேட்டாபேஸில் இல்லை என்றால் (தவறான URL மூலம் வந்தால்)
-    if (!blog) {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        message:
-          "The movie news you are looking for does not exist or has been removed.",
+        message: "Blog ID is required",
       });
     }
 
-    return res.status(200).json({ success: true, data: blog });
+    const blog = await BlogsSchema.findByPk(id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "The movie news you are looking for does not exist.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: blog,
+    });
   } catch (error) {
     console.error("Error fetching blog detail:", error);
     return res.status(500).json({
@@ -56,14 +56,13 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
-// 3. Active ப்ளாக்குகளை மட்டும் பெறுதல் (PUBLIC UI)
+
+// 3. Get Active Blogs (PUBLIC)
 exports.getActiveBlogs = async (req, res) => {
   try {
     const activeBlogs = await BlogsSchema.findAll({
-      where: {
-        isActive: true,
-      },
-      order: [["createdAt", "DESC"]],
+      where: { isActive: true },
+      order: [["order", "ASC"], ["createdAt", "DESC"]],
     });
 
     return res.status(200).json({
@@ -79,11 +78,15 @@ exports.getActiveBlogs = async (req, res) => {
   }
 };
 
-// 4. புதிய ப்ளாக் உருவாக்குதல் (CREATE)
+
+// 4. Create Blog
 exports.createBlog = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: "Banner image is required" });
+      return res.status(400).json({
+        success: false,
+        message: "Banner image is required.",
+      });
     }
 
     const {
@@ -99,30 +102,26 @@ exports.createBlog = async (req, res) => {
       order,
     } = req.body;
 
-    // மிக முக்கியமான தகவல்கள் விடுபட்டிருந்தால்
-    if (!title || !shortDescription || !directedBy) {
+    if (!title?.trim() || !shortDescription?.trim() || !directedBy?.trim()) {
       return res.status(400).json({
         success: false,
         message: "Please provide Title, Short Description, and Director name.",
       });
     }
 
-    const bannerImage = req.file.path;
-    const imagePublicId = req.file.filename;
-
     const newBlog = await BlogsSchema.create({
-      title,
-      bannerImage,
-      imagePublicId,
-      shortDescription,
+      title: title.trim(),
+      bannerImage: req.file.path,
+      imagePublicId: req.file.filename,
+      shortDescription: shortDescription.trim(),
       longDescription,
       starCast,
-      directedBy,
+      directedBy: directedBy.trim(),
       producedBy,
       cinematography,
       newsDate,
-      order: order || 1,
-      isActive: isActive === "true" || isActive === true,
+      order: Number(order) || 1,
+      isActive: isActive === undefined ? true : (String(isActive) === "true"),
     });
 
     return res.status(201).json({
@@ -134,62 +133,91 @@ exports.createBlog = async (req, res) => {
     console.error("Error creating blog:", error);
     return res.status(500).json({
       success: false,
-      message: "Creation failed. Ensure all fields are valid.",
-      error: error.message,
+      message: error.message,
     });
   }
 };
 
-// 5. ப்ளாக்கை புதுப்பித்தல் (UPDATE)
-exports.updateBlog = async (req, res) => {
-  const { id } = req.params;
-  const updateData = req.body;
 
+// 5. Update Blog
+exports.updateBlog = async (req, res) => {
   try {
+    const { id } = req.params;
+    const updateData = req.body;
+
     const blog = await BlogsSchema.findByPk(id);
+
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
     }
 
-    // புதிய இமேஜ் இருந்தால் அப்டேட் செய்யவும்
+    // Image update
     if (req.file) {
       blog.bannerImage = req.file.path;
       blog.imagePublicId = req.file.filename;
     }
 
-    // மற்ற ஃபீல்டுகளை அப்டேட் செய்ய
+    // Update fields
     Object.keys(updateData).forEach((key) => {
       if (key === "isActive") {
-        blog.isActive = updateData[key] === "true" || updateData[key] === true;
-      } else {
-        blog[key] = updateData[key] || blog[key];
+        blog.isActive = String(updateData[key]) === "true";
+      } else if (key === "order") {
+        blog.order = Number(updateData[key]) || blog.order;
+      } else if (
+        updateData[key] !== undefined &&
+        updateData[key] !== "null" &&
+        updateData[key] !== ""
+      ) {
+        blog[key] = updateData[key];
       }
     });
 
     await blog.save();
+
     return res.status(200).json({
+      success: true,
       message: "Blog updated successfully",
       data: blog,
     });
   } catch (error) {
     console.error("Error updating blog:", error);
-    return res.status(500).json({ message: "Update failed" });
+    return res.status(500).json({
+      success: false,
+      message: "Update failed",
+    });
   }
 };
 
-// 6. நீக்குதல் (DELETE)
+
+// 6. Delete Blog
 exports.deleteBlog = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+
     const blog = await BlogsSchema.findByPk(id);
+
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
     }
 
-    await blog.destroy(); // Hooks மூலம் Cloudinary இமேஜ் நீக்கப்படும்
-    return res.status(200).json({ message: "Blog deleted successfully" });
+    await blog.destroy();
+
+    return res.status(200).json({
+      success: true,
+      message: "Blog and associated image deleted successfully",
+    });
   } catch (error) {
     console.error("Error deleting blog:", error);
-    return res.status(500).json({ message: "Deletion failed" });
+    return res.status(500).json({
+      success: false,
+      message: "Deletion failed",
+      error: error.message,
+    });
   }
 };

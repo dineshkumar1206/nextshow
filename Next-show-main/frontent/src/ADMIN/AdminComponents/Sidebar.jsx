@@ -162,6 +162,45 @@ const Sidebar = () => {
               New Trailers
             </NavLink>
           </li>
+
+          {/* --- News Section --- */}
+          <div className="text-gray-500 text-[10px] uppercase font-bold px-3 mb-2 mt-6 tracking-widest">
+            News Management
+          </div>
+
+          <li>
+            <NavLink
+              to="news-add"
+              className={({ isActive }) =>
+                `flex items-center p-3 rounded-lg transition duration-200 
+               ${
+                 isActive
+                   ? "bg-orange-400 text-white shadow-lg"
+                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
+               }`
+              }
+            >
+              <HiNewspaper className="mr-3" />
+              Add Movie News
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="news-list"
+              className={({ isActive }) =>
+                `flex items-center p-3 rounded-lg transition duration-200 
+               ${
+                 isActive
+                   ? "bg-orange-400 text-white shadow-lg"
+                   : "text-gray-300 hover:bg-gray-700 hover:text-white"
+               }`
+              }
+            >
+              <HiNewspaper className="mr-3" />
+              Manage News List
+            </NavLink>
+          </li>
           {/* <li>
             <NavLink
               to="serviceContent"

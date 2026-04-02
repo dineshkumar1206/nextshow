@@ -10,28 +10,30 @@ const {
 const {
   AdminAuthProtect,
 } = require("../../middlewares/AdminAuthMiddleware/AdminMiddleware");
-const { uploadMix } = require("../../config/cloudinaryConfig");
+
+// 🔥 IMPORTANT: Make sure this name matches your Cloudinary/Multer config file
+const { uploadMix } = require("../../config/cloudinaryConfig"); 
 
 const router = express.Router();
 
-// 1. Active நிலையில் உள்ள ப்ளாக்குகளை மட்டும் பெறுதல் (Home Page-ல் காட்ட)
+// 1. PUBLIC: Get only active blogs for the News Page
 router.get("/blogs-active", getActiveBlogs);
 
-// 3. அனைத்து ப்ளாக்குகளையும் பெறுதல்
+// 2. PUBLIC: Get a single blog detail
+router.get("/blog-detail/:id", getBlogById);
+
+// 3. ADMIN: Get all blogs (including inactive ones)
 router.get("/blogs-all", AdminAuthProtect, getAllBlogs);
 
-// 4. புதிய ப்ளாக் உருவாக்குதல்
+// 4. ADMIN: Create new blog with Image Upload
 router.post(
   "/blog-create",
   AdminAuthProtect,
-  uploadMix.single("bannerImage"), // ஒரே ஒரு இமேஜ் மட்டும் என்பதால் single
+  uploadMix.single("bannerImage"), // 'bannerImage' must match the name in your React FormData
   createBlog
 );
 
-// 2. ஒரு குறிப்பிட்ட ப்ளாக்கை மட்டும் பெறுதல் (Details Page-ல் காட்ட)
-router.get("/blog-detail/:id", getBlogById);
-
-// 5. ப்ளாக்கை புதுப்பித்தல்
+// 5. ADMIN: Update blog (can also update image)
 router.put(
   "/blog-update/:id",
   AdminAuthProtect,
@@ -39,7 +41,7 @@ router.put(
   updateBlog
 );
 
-// 6. ப்ளாக்கை நீக்குதல்
+// 6. ADMIN: Delete blog
 router.delete("/blog-delete/:id", AdminAuthProtect, deleteBlog);
 
 module.exports = router;
