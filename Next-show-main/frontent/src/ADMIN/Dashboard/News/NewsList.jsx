@@ -63,11 +63,11 @@ const NewsList = () => {
                 <td className="p-4 text-right">
                   <div className="flex justify-end gap-3">
                    <button 
-  onClick={() => navigate(`/admin/edit-news/${item.id}`)}
-  className="p-2 hover:bg-blue-600/20 text-blue-500 rounded-lg transition-all"
->
-  <FaEdit />
-</button>
+                       onClick={() => navigate(`/admin/edit-news/${item.id}`)}
+                       className="p-2 hover:bg-blue-600/20 text-blue-500 rounded-lg transition-all"
+                     >
+                       <FaEdit />
+                     </button>
                     <button 
                       onClick={() => handleDelete(item.id)}
                       className="p-2 hover:bg-red-600/20 text-red-500 rounded-lg transition-all" 

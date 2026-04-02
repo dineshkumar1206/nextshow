@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 // Dummy Data matching your API response structure
 // const dummyBlogs = [
@@ -69,6 +70,8 @@ const NewsHeroSection = ({ blogs }) => {  // Expecting blogs as a prop from pare
 
   const featured = blogs[0];
   const sideBlogs = blogs.slice(1, 5);
+
+  const navigate = useNavigate();
 
   return (
     <section className=" py-10 font-sans">

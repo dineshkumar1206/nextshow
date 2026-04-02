@@ -24,6 +24,7 @@ import NewTrailerSection from "./ADMIN/Dashboard/NewTrailers/NewTrailerSection";
 import NewsList from "./ADMIN/Dashboard/News/NewsList";
 import AddNews from "./ADMIN/Dashboard/News/AddNews";
 import EditNews from "./ADMIN/Dashboard/News/EditNews";
+import BlogDetails from "./News/BlogDetails";
 // import "swiper/css";
 // import "swiper/css/navigation";
 // import "swiper/css/pagination";
@@ -72,6 +73,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/auth/login" element={<Login />} />
         <Route path="/movie/:slug" element={<MovieDetailsPage />} />
+        <Route path="/news/:id" element={<BlogDetails />} />
 
         {/* Admin Dashboard */}
         <Route path="/admin" element={<AdminProtect />}>
@@ -84,6 +86,7 @@ const App = () => {
             <Route path="news-list" element={<NewsList />} /> {/* New Route for News List */}
             <Route path="news-add" element={<AddNews />} /> {/* New Route for Adding News */}
             <Route path="edit-news/:id" element={<EditNews/>} />
+            
           </Route>
         </Route>
         {/* Optional: 404 */}
